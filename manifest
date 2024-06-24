@@ -1,9 +1,9 @@
 #ExampleModule
 #Tue May 01 20:52:13 UTC 2018
 JVMLevel=
-LSID=urn\:lsid\:broad.mit.edu\:cancer.software.genepattern.module.analysis\:00374\:3.0
-author=Edwin F. Juarez;UCSD - Mesirov Lab
-categories=administration
+LSID=urn:lsid:genepattern.org:module.analysis:00461:999999999
+author=Edwin Huang, Ted Liefeld, Thorin Tabor, Michael Reich;UCSD - Mesirov Lab
+categories=spatial transcriptomics
 #commandLine when run with source in Docker container:
 commandLine=/ExampleModule/ExampleModule.py -f <filename> -a <add_custom_message> -m <message_to_add> -o <output_filename>
 #commandLine when run with source in module zip/taskLib:
