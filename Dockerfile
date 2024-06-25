@@ -1,33 +1,71 @@
-### copyright 2017-2021 Regents of the University of California and the Broad Institute. All rights reserved.
-FROM genepattern/docker-python36:0.4
+FROM r-base:4.3.2
 
-MAINTAINER Barbara Hill <bhill@broadinstitute.org>
 
-# While you are debugging/iterating over your module code in the Module integrator comment out the secion below.
-# When you are done, export your module, unzip and move your source files into the src directory in this local workspace.
-# Then, update this section for you module and build using the docker build command below - again updated for your module.
-# Note that you only need to add gpuser if you base image (the image specified in FROM) is run as root. If it runs as another user, you may need to become root (USER root) to add folders...etc. Just make sure to switch back to the non-root user before exiting.
-# -----------------------------------
-#creating a non-root user - see above
-RUN useradd -ms /bin/bash gpuser
-USER gpuser
-WORKDIR /home/gpuser
+#Install Moffitt's CA certificates
+RUN apt-get update -qq && \
+    apt-get upgrade -y && \
+    apt-get clean all && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates locales wget libcurl4-openssl-dev libxml2-dev libssl-dev && \
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* 
 
-#switch back to root to create dir
-USER root
-RUN mkdir /ExampleModule \
-    && chown gpuser /ExampleModule
+#    wget --no-check-certificate -O /usr/local/share/ca-certificates/moffitt-ca.crt \
+#      "https://gitlab.moffitt.usf.edu:8000/singularity/mcc-certificates/-/raw/main/certs/moffitt-ca.cer" && \
+#    wget --no-check-certificate -O /usr/local/share/ca-certificates/moffitt-ca-int.crt \
+#      "https://gitlab.moffitt.usf.edu:8000/singularity/mcc-certificates/-/raw/main/certs/moffitt-ca-int.cer" && \
+#    wget --no-check-certificate -O /usr/local/share/ca-certificates/moffitt-chain \
+#      "https://gitlab.moffitt.usf.edu:8000/singularity/mcc-certificates/-/raw/main/certs/moffitt-chain" && \
+#    chmod 644 /usr/local/share/ca-certificates/*moffitt* && \
+#    update-ca-certificates --verbose && \
+#        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen en_US.utf8 && update-locale LANG=en_US.UTF-8
 
-#switch to non-root before exiting so that we don't run as root on the server, and copy all of the src files into the container.
-USER gpuser
-COPY src/*.py /ExampleModule/
 
-RUN /ExampleModule/ExampleModule.py
-# -----------------------------------
 
-# docker build --rm https://github.com/genepattern/ExampleModule.git#develop -f Dockerfile -t genepattern/example-module:<tag>
-# make sure this repo and tag match the manifest & don't forget to docker push!
-# docker push genepattern/example-module:<tag>
+#Install required system libraries
+RUN apt-get -y update && apt-get -y install libhdf5-dev libudunits2-dev libv8-dev libgdal-dev cmake libfftw3-dev libfontconfig1-dev libcurl4-openssl-dev libglpk-dev libgsl-dev libmagick++-dev
 
-# you can use this command to run Docker and iterate locally (update for your paths and module name, of course)
-# docker run --rm -it --user gpuser -v /c/Users/MyUSER/PathTo/ExampleModule:/mnt/mydata:rw genepattern/example-module:<tag> bash
+RUN mkdir /spatialGE
+WORKDIR /spatialGE
+
+#Install libraries required by spatialGE
+RUN Rscript -e "install.packages('systemfonts', dependencies = TRUE)"
+RUN Rscript -e "install.packages('ggforce')"
+RUN Rscript -e "install.packages('ggpubr')"
+RUN Rscript -e "install.packages('BiocManager')"
+RUN Rscript -e "BiocManager::install('EBImage', update = TRUE, ask = FALSE)"
+RUN Rscript -e "BiocManager::install('ComplexHeatmap', update = TRUE, ask = FALSE)"
+RUN Rscript -e "install.packages('rgeos')"
+RUN Rscript -e "install.packages('hdf5r')"
+RUN Rscript -e "install.packages('remotes')"
+
+#Install support libraries ro work with Excel files and images
+RUN Rscript -e "install.packages('openxlsx')"
+RUN Rscript -e "install.packages('svglite')"
+RUN Rscript -e "install.packages('rdist')"
+RUN Rscript -e "install.packages('magick')"
+
+RUN Rscript -e "remotes::install_github('JEFworks-Lab/STdeconvolve')"
+
+RUN Rscript -e "install.packages('ggtext')"
+
+#Required for Phenotyping-CosMx
+RUN Rscript -e "BiocManager::install('SpatialDecon', update = TRUE, ask = FALSE)"
+#Required for InSituType
+RUN Rscript -e "BiocManager::install('sparseMatrixStats', update = TRUE, ask = FALSE)"
+RUN Rscript -e "BiocManager::install('SummarizedExperiment', update = TRUE, ask = FALSE)"
+RUN Rscript -e "BiocManager::install('SingleCellExperiment', update = TRUE, ask = FALSE)"
+RUN Rscript -e "install.packages('lsa')"
+#Required for Phenotyping-CosMx
+RUN Rscript -e "remotes::install_github('Nanostring-Biostats/InSituType')"
+
+RUN Rscript -e "install.packages('uwot')"
+
+#Install spatialGE library
+RUN Rscript -e "remotes::install_github('FridleyLab/spatialGE')  "
+
+
+
+
+
