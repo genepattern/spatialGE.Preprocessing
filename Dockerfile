@@ -45,6 +45,7 @@ RUN Rscript -e "install.packages('openxlsx')"
 RUN Rscript -e "install.packages('svglite')"
 RUN Rscript -e "install.packages('rdist')"
 RUN Rscript -e "install.packages('magick')"
+RUN Rscript -e "install.packages('msigdbr')"
 
 RUN Rscript -e "remotes::install_github('JEFworks-Lab/STdeconvolve')"
 
