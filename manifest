@@ -1,74 +1,133 @@
 #ExampleModule
-#Tue May 01 20:52:13 UTC 2018
+#Tue June 25 2024
 JVMLevel=
 LSID=urn:lsid:genepattern.org:module.analysis:00461:999999999
 author=Edwin Huang, Ted Liefeld, Thorin Tabor, Michael Reich;UCSD - Mesirov Lab
 categories=spatial transcriptomics
 #commandLine when run with source in Docker container:
-commandLine=/ExampleModule/ExampleModule.py -f <filename> -a <add_custom_message> -m <message_to_add> -o <output_filename>
-#commandLine when run with source in module zip/taskLib:
-#commandLine=<python_3.6> <libdir>ExampleModule.py -f <filename> -a <add_custom_message> -m <message_to_add> -o <output_filename>
-job.docker.image=genepattern/example-module:2
-src.repo=https://github.com/genepattern/ExampleModule/tree/v3
+commandLine=Rscript /build/spatialGE.wrapper.R -f <input.data.archive> -v <verbose> -m <message_to_add> -o <output_filename>
+job.docker.image=genepattern/spatialge:0.2
+src.repo=https://github.com/genepattern/spatialGE.Preprocessing
 cpuType=any
-description=This is an example GenePattern module written in Python 3. It can be used as a template for future modules. It reads a file and potentially adds a line of text
+description=The package spatialGE provides a collection of tools for the visualization of gene expression from spatially-resolved transcriptomic experiments. The data input methods have been designed so that any data can be analyzed as long as it contains gene expression counts per region of interest (ROI), spot, or cell, and the spatial coordinates of those ROIs, spots, or cells, as it is generated in platforms such as GeoMx, Visium, and CosMx-SMI. The spatialge.Preprocessing module performs initial data ingestion, filtering, transform and pseudo-bulk operations to prepare data for further processing.
 documentationUrl=https://genepattern.github.io/ExampleModule/v3/
-fileFormat=txt
-language=Python
-name=ExampleModule
+fileFormat=Rdata
+language=R
+name=spatialge.Preprocessing
 os=any
 p1_MODE=IN
 p1_TYPE=FILE
 p1_default_value=
-p1_description=The file to be read
-p1_fileFormat=txt
-p1_flag=-f
-p1_name=filename
+p1_description=Input data archive in gz format.  Should match directory structure as defined by spatialGE as described <a href="https://fridleylab.github.io/spatialGE/reference/STlist.html">here</a>.
+p1_fileFormat=gz
+p1_flag=-f 
+p1_name=input.data.archive
 p1_numValues=0..1
 p1_optional=
 p1_prefix=
 p1_prefix_when_specified=
 p1_type=java.io.File
 p1_value=
+
 p2_MODE=
 p2_TYPE=TEXT
 p2_default_value=False
-p2_description=Whether or not to add a custom message
+p2_description=Output additional files including summarized STList, distribution_plots before and after filtering, and pseudobulk PCA plot and heatmap.
 p2_fileFormat=
 p2_flag=-a
-p2_name=add_custom_message
+p2_name=verbose
 p2_numValues=0..1
 p2_optional=
 p2_prefix=
 p2_prefix_when_specified=
 p2_type=java.lang.String
 p2_value=False\=False;True\=True
+
 p3_MODE=
 p3_TYPE=TEXT
-p3_default_value=
-p3_description=What message to add (if any)
+p3_default_value=False
+p3_description=None, log or sct. If log, log-normalization is performed. If sct, then the <a href="https://rdrr.io/pkg/sctransform/man/vst.html">SCTransform</a> method is applied. SCT is a variance stabilizing transformation to UMI count data using a regularized Negative Binomial regression model.
 p3_fileFormat=
-p3_flag=-m
-p3_name=message_to_add
+p3_flag=-a
+p3_name=transform.data
 p3_numValues=0..1
 p3_optional=
 p3_prefix=
 p3_prefix_when_specified=
 p3_type=java.lang.String
-p3_value=
+p3_value=None\=None;Log\=Log;SCT\=SCT
+
 p4_MODE=
 p4_TYPE=TEXT
-p4_default_value=
+p4_default_value=<input.data.archive_basename>.Rdata
 p4_description=The basename to use for output file (no need to add ".txt" at the end)
 p4_fileFormat=
 p4_flag=-o
-p4_name=output_filename
+p4_name=output.filename
 p4_numValues=0..1
 p4_optional=
 p4_prefix=
 p4_prefix_when_specified=
 p4_type=java.lang.String
 p4_value=
+
+p5_MODE=
+p5_TYPE=TEXT
+p5_default_value=False
+p5_description=Perform pseudobulk to creates (pseudo) “bulk” RNAseq data sets by combining all counts from each sample. Then log transform the “pseudo bulk” and perform PCA. Note that the spatial coordinate information is not considered here, which is intended only as an exploratory analysis analysis.
+p5_fileFormat=
+p5_flag=-a
+p5_name=verbose
+p5_numValues=0..1
+p5_optional=
+p5_prefix=
+p5_prefix_when_specified=
+p5_type=java.lang.String
+p5_value=False\=False;True\=True
+
+p6_MODE=
+p6_TYPE=TEXT
+p6_default_value=5000
+p6_description=The number of most variable genes (standard deviation) to use in pseudobulk analysis.
+p6_fileFormat=
+p6_flag=-o
+p6_name=pseudobulk.max.var.genes
+p6_numValues=0..1
+p6_optional=
+p6_prefix=
+p6_prefix_when_specified=
+p6_type=java.lang.Integer
+p6_value=
+
+p7_MODE=
+p7_TYPE=TEXT
+p7_default_value=patient_id
+p7_description=A string indicating the name of the variable in the sample metadata to color points in the PCA plot.
+p7_fileFormat=
+p7_flag=-o
+p7_name=pseudobulk.plot.meta
+p7_numValues=0..1
+p7_optional=
+p7_prefix=
+p7_prefix_when_specified=
+p7_type=java.lang.String
+p7_value=
+
+p8_MODE=
+p8_TYPE=TEXT
+p8_default_value=30
+p8_description=The number of genes to display in the pseudobulk heatmap, selected based on decreasing order of standard deviation across samples.
+p8_fileFormat= 
+p8_flag=-o
+p8_name=pseudobulk.heatmap.num.displayed.genes
+p8_numValues=0..1
+p8_optional=
+p8_prefix=
+p8_prefix_when_specified=
+p8_type=java.lang.Integer
+p8_value=
+
+
 privacy=public
 quality=production
 taskDoc=
