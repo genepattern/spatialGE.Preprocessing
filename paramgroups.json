@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Inputs and Outputs",
+        "description": "Required Parameters",
+        "hidden": false,
+        "parameters": [
+            "input.data.archive",
+            "output.filename",
+        ]
+    },
+    {
+        "name": "Other Parameters",
+        "description": "",
+        "hidden": false,
+        "parameters": [
+            "verbose",
+            "transform.data",
+            "distribution.plot.meta",
+        ]
+    },
+     {
+        "name": "Pseudobulk Parameters",
+        "description": "",
+        "hidden": false,
+        "parameters": [
+            "pseudobulk",
+            "pseudobulk.max.var.genes",
+            "pseudobulk.plot.meta",
+            "pseudobulk.heatmap.num.displayed.genes",
+        ]
+    },
+    {
+        "name": "Filtering Parameters",
+        "description": "",
+        "hidden": false,
+        "parameters": [
+            "spot.min.reads",
+            "spot.max.reads",
+            "spot.min.genes",
+            "spot.max.genes",
+        ]
+    }
+]
