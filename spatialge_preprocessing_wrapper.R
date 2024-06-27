@@ -94,6 +94,10 @@ system(paste("gunzip ", new_file_location))
 # first pass, assume visium data.  Later need to generalize this bit
 visium_folders <- list.dirs(temp_dir, full.names=T, recursive=F)
 clin_file <- list.files(data_files, full.names=T, recursive=F, pattern='clinical')
+
+data_files <- list.files(temp_dir, full.names=T)
+clin_file <- grep("clinical", data_files, value=T)
+
 print(visium_folders)
 if(length(clin_file) <= 0){
     stop('No clinical file found in the data archive')
