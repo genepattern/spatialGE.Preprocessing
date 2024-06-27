@@ -10,7 +10,7 @@ library('spatialGE')
 spec <- matrix(c(
   "input.data.archive", "f", 2, "character",
   "verbose", "v", 2, "logical",
-  "transform.data", "m", 2, "character",
+  "transform.data", "m", 2, "logical",
   "output_filename", "o", 2, "character",
   "pseudobulk", "p", 2, "logical",
   "pseudobulk.max.var.genes", "pmg", 1, "integer",
@@ -74,3 +74,35 @@ rm.spots <- ifelse(is.null(opt[["rm.spots"]]), NA, opt[["rm.spots"]])
 rm.genes <- ifelse(is.null(opt[["rm.genes"]]), NA, opt[["rm.genes"]])
 rm.genes.regex <- ifelse(is.null(opt[["rm.genes.regex"]]), NA, opt[["rm.genes.regex"]])
 spot.percentage.genes.regex <- ifelse(is.null(opt[["spot.percentage.genes.regex"]]), NA, opt[["spot.percentage.genes.regex"]])
+
+# start by making the data into an STList object
+# for that we need to gunzip input.data.archive
+# and then read the data into an STList object
+
+# Create a temporary directory
+temp_dir <- tempdir()
+
+# Create the path to the new file location in the temporary directory
+new_file_location <- file.path(temp_dir, basename(input.data.archive))
+
+# Copy the file to the new location
+file.copy(input.data.archive, new_file_location)
+
+# Use the system() function to execute the gunzip command with the new file location
+system(paste("gunzip ", new_file_location))
+
+# first pass, assume visium data.  Later need to generalize this bit
+visium_folders <- list.dirs(temp_dir, full.names=T, recursive=F)
+clin_file <- list.files(data_files, full.names=T, recursive=F, pattern='clinical')
+print(visium_folders)
+if(length(clin_file) <= 0){
+    stop('No clinical file found in the data archive')
+}
+
+tnbc <- STlist(rnacounts=visium_folders, samples=clin_file)
+
+summarize_STlist(tnbc)
+
+
+# At the end of the script, delete the temporary directory and its contents
+unlink(temp_dir, recursive = TRUE)
