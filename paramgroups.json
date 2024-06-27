@@ -5,7 +5,7 @@
         "hidden": false,
         "parameters": [
             "input.data.archive",
-            "output.filename",
+            "output.filename"
         ]
     },
     {
@@ -14,8 +14,18 @@
         "hidden": false,
         "parameters": [
             "verbose",
+            "distribution.plot.meta"
+        ]
+    },
+    {
+        "name": "Transform Parameters",
+        "description": "",
+        "hidden": false,
+        "parameters": [
             "transform.data",
-            "distribution.plot.meta",
+            "transform.scale.f",
+            "transform.num.regression.genes",
+            "transform.min.spots.or.cells"
         ]
     },
      {
@@ -38,6 +48,28 @@
             "spot.max.reads",
             "spot.min.genes",
             "spot.max.genes",
+            "spot.min.percent",
+            "spot.max.percent",
+            "gene.min.reads",
+            "gene.max.reads",
+            "gene.min.spots",
+            "gene.max.spots",
+            "gene.min.percent",
+            "gene.max.percent",
+            "filter.samples",
+            "rm.tissue",
+            "rm.spots",
+            "rm.genes",
+            "rm.genes.regex",
+            "spot.percentage.genes.regex"
+        ]
+    },
+    {
+        "name": "XXX",
+        "description": "",
+        "hidden": false,
+        "parameters": [
+
         ]
     }
 ]
