@@ -5,16 +5,67 @@
         "hidden": false,
         "parameters": [
             "input.data.archive",
+            "input.clinical.data",
             "output.filename"
         ]
     },
+
     {
-        "name": "Other Parameters",
+        "name": "Filtering Parameters",
         "description": "",
         "hidden": false,
         "parameters": [
-            "verbose",
-            "distribution.plot.meta"
+            "filter.data"
+            ]
+    },
+    {
+        "name": "Filtering Parameters/Spot Filtering",
+        "description": "",
+        "hidden": true,
+         "parameters": [
+             "spot.min.reads",
+            "spot.max.reads",
+            "spot.min.genes",
+            "spot.max.genes",
+            "spot.min.percent",
+            "spot.max.percent"
+        ]
+    },
+{
+        "name": "Filtering Parameters/Gene Filtering",
+        "description": "",
+        "hidden": true,
+        "parameters": [
+            "gene.min.reads",
+            "gene.max.reads",
+            "gene.min.spots",
+            "gene.max.spots",
+            "gene.min.percent",
+            "gene.max.percent"
+        ]
+    },
+    {
+        "name": "Filtering Parameters/Other Filtering",
+        "description": "",
+        "hidden": true,
+        "parameters": [
+            "filter.samples",
+            "rm.tissue",
+            "rm.spots",
+            "rm.genes",
+            "rm.genes.regex",
+            "spot.percentage.genes.regex"
+        ]
+    },
+     {
+        "name": "Pseudobulk Parameters",
+        "description": "",
+        "hidden": false,
+        "parameters": [
+            "pseudobulk",
+            "pseudobulk.max.var.genes",
+            "pseudobulk.plot.meta",
+            "pseudobulk.heatmap.num.displayed.genes"
         ]
     },
     {
@@ -28,48 +79,13 @@
             "transform.min.spots.or.cells"
         ]
     },
-     {
-        "name": "Pseudobulk Parameters",
+       {
+        "name": "Other Parameters",
         "description": "",
         "hidden": false,
         "parameters": [
-            "pseudobulk",
-            "pseudobulk.max.var.genes",
-            "pseudobulk.plot.meta",
-            "pseudobulk.heatmap.num.displayed.genes",
-        ]
-    },
-    {
-        "name": "Filtering Parameters",
-        "description": "",
-        "hidden": false,
-        "parameters": [
-            "spot.min.reads",
-            "spot.max.reads",
-            "spot.min.genes",
-            "spot.max.genes",
-            "spot.min.percent",
-            "spot.max.percent",
-            "gene.min.reads",
-            "gene.max.reads",
-            "gene.min.spots",
-            "gene.max.spots",
-            "gene.min.percent",
-            "gene.max.percent",
-            "filter.samples",
-            "rm.tissue",
-            "rm.spots",
-            "rm.genes",
-            "rm.genes.regex",
-            "spot.percentage.genes.regex"
-        ]
-    },
-    {
-        "name": "XXX",
-        "description": "",
-        "hidden": false,
-        "parameters": [
-
+            "verbose",
+            "distribution.plot.meta"
         ]
     }
 ]

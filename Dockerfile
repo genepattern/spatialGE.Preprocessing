@@ -20,4 +20,6 @@ RUN Rscript -e "install.packages(c('systemfonts', 'ggforce', 'ggpubr', 'BiocMana
 RUN Rscript -e "BiocManager::install(c('EBImage', 'ComplexHeatmap', 'SpatialDecon', 'sparseMatrixStats', 'SummarizedExperiment', 'SingleCellExperiment'), update = TRUE, ask = FALSE)"
 RUN Rscript -e "remotes::install_github(c('JEFworks-Lab/STdeconvolve', 'Nanostring-Biostats/InSituType', 'FridleyLab/spatialGE'))"
 RUN Rscript -e "install.packages(c('getopt'))"
+RUN Rscript -e "install.packages(c('optparse'))"
+
 COPY ./* /spatialGE
