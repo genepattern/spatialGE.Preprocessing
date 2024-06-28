@@ -26,7 +26,7 @@ p1_name=input.data.archive
 p1_numValues=0..1
 p1_optional=
 p1_prefix=
-p1_prefix_when_specified=-b
+p1_prefix_when_specified=-a
 p1_type=java.io.File
 p1_value=
 

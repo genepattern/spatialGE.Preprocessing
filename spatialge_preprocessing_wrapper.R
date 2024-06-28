@@ -6,81 +6,101 @@ library('ggplot2')
 library('dplyr')
 library( 'stringr')
 library('spatialGE')
+library('magrittr')
 
+make_option_safe <- function(...) {
+  res <- tryCatch(
+    make_option(...),
+    error = function(e) {
+      print(paste("Failed to create option:", deparse(substitute(...))))
+      print(e)
+      NULL
+    }
+  )
+  if (is.null(res)) {
+    stop("Failed to create an option")
+  }
+  res
+}
 
 # Define the specification for each command line argument
+# Define the specification for each command line argument
 option_list = list(
-  make_option(c("-a", "--input_data_archive"), type="character", default=NA, help="input data archive"),
-  make_option(c("-b", "--input_clinical_data"), type="character", default=NA, help="input clinical data"),
-  make_option(c("-c", "--verbose"), type="logical", default=NA, help="verbose"),
-  make_option(c("-d", "--transform_data"), type="logical", default=NA, help="transform data"),
-  make_option(c("-e", "--output_filename"), type="character", default=NA, help="output filename"),
-  make_option(c("-f", "--pseudobulk"), type="logical", default=NA, help="pseudobulk"),
-  make_option(c("-g", "--pseudobulk_max_var_genes"), type="integer", default=NA, help="pseudobulk max var genes"),
-  make_option(c("-F", "--pseudobulk_plot_meta"), type="character", default=NA, help="pseudobulk plot meta"),
-  make_option(c("-i", "--pseudobulk_heatmap_num_displayed_genes"), type="integer", default=NA, help="pseudobulk heatmap num displayed genes"),
-  make_option(c("-j", "--distribution_plot_meta"), type="character", default=NA, help="distribution plot meta"),
-  make_option(c("-k", "--spot_min_reads"), type="integer", default=NA, help="spot min reads"),
-  make_option(c("-l", "--spot_min_genes"), type="integer", default=NA, help="spot min genes"),
-  make_option(c("-m", "--spot_max_reads"), type="integer", default=NA, help="spot max reads"),
-  make_option(c("-n", "--spot_max_genes"), type="integer", default=NA, help="spot max genes"),
-  make_option(c("-o", "--transform_scale_f"), type="integer", default=NA, help="transform scale f"),
-  make_option(c("-p", "--transform_num_regression_genes"), type="integer", default=NA, help="transform num regression genes"),
-  make_option(c("-q", "--transform_min_spots_or_cells"), type="integer", default=NA, help="transform min spots or cells"),
-  make_option(c("-r", "--spot_min_percent"), type="integer", default=NA, help="spot min percent"),
-  make_option(c("-s", "--spot_max_percent"), type="integer", default=NA, help="spot max percent"),
-  make_option(c("-t", "--gene_min_reads"), type="integer", default=NA, help="gene min reads"),
-  make_option(c("-u", "--gene_max_reads"), type="integer", default=NA, help="gene max reads"),
-  make_option(c("-v", "--gene_min_spots"), type="integer", default=NA, help="gene min spots"),
-  make_option(c("-w", "--gene_max_spots"), type="integer", default=NA, help="gene max spots"),
-  make_option(c("-x", "--gene_min_percent"), type="integer", default=NA, help="gene min percent"),
-  make_option(c("-y", "--gene_max_percent"), type="integer", default=NA, help="gene max percent"),
-  make_option(c("-z", "--filter_samples"), type="character", default=NA, help="filter samples"),
-  make_option(c("-A", "--rm_tissue"), type="character", default=NA, help="rm tissue"),
-  make_option(c("-B", "--rm_spots"), type="character", default=NA, help="rm spots"),
-  make_option(c("-C", "--rm_genes"), type="character", default=NA, help="rm genes"),
-  make_option(c("-D", "--rm_genes_regex"), type="character", default=NA, help="rm genes regex"),
-  make_option(c("-E", "--spot_percentage_genes_regex"), type="character", default=NA, help="spot percentage genes regex")
-  make_option(c("-G", "--filter_data"), type="logical", default=TRUE, help="filter data"),
+  make_option_safe(c("-a", "--input_data_archive"), type="character",  help="input data archive"),
+  make_option_safe(c("-b", "--input_clinical_data"), type="character",  help="input clinical data"),
+  make_option_safe(c("-c", "--verbose"), type="logical", default=FALSE, help="verbose"),
+  make_option_safe(c("-d", "--transform_data"), type="logical", default=TRUE, help="transform data"),
+  make_option_safe(c("-e", "--output_filename"), type="character",  help="output filename"),
+  make_option_safe(c("-f", "--pseudobulk"), type="logical", default=TRUE, help="pseudobulk"),
+  make_option_safe(c("-g", "--pseudobulk_max_var_genes"), type="integer", default=5000, help="pseudobulk max var genes"),
+  make_option_safe(c("-F", "--pseudobulk_plot_meta"), type="character", default='patient_id', help="pseudobulk plot meta"),
+  make_option_safe(c("-i", "--pseudobulk_heatmap_num_displayed_genes"), type="integer", default=30, help="pseudobulk heatmap num displayed genes"),
+  make_option_safe(c("-j", "--distribution_plot_meta"), type="character", default='total_counts', help="distribution plot meta"),
+  make_option_safe(c("-k", "--spot_min_reads"), type="integer", default=0, help="spot min reads"),
+  make_option_safe(c("-l", "--spot_min_genes"), type="integer", default=0, help="spot min genes"),
+  make_option_safe(c("-m", "--spot_max_reads"), type="integer", default=NULL, help="spot max reads"),
+  make_option_safe(c("-n", "--spot_max_genes"), type="integer", default=NULL, help="spot max genes"),
+  make_option_safe(c("-o", "--transform_scale_f"), type="integer", default=NA, help="transform scale f"),
+  make_option_safe(c("-p", "--transform_num_regression_genes"), type="integer", default=NA, help="transform num regression genes"),
+  make_option_safe(c("-q", "--transform_min_spots_or_cells"), type="integer", default=NA, help="transform min spots or cells"),
+  make_option_safe(c("-r", "--spot_min_percent"), type="integer", default=0, help="spot min percent"),
+  make_option_safe(c("-s", "--spot_max_percent"), type="integer", default=NULL, help="spot max percent"),
+  make_option_safe(c("-t", "--gene_min_reads"), type="integer", default=0, help="gene min reads"),
+  make_option_safe(c("-u", "--gene_max_reads"), type="integer", default=NULL, help="gene max reads"),
+  make_option_safe(c("-v", "--gene_min_spots"), type="integer", default=0, help="gene min spots"),
+  make_option_safe(c("-w", "--gene_max_spots"), type="integer", default=NULL, help="gene max spots"),
+  make_option_safe(c("-x", "--gene_min_percent"), type="integer", default=0, help="gene min percent"),
+  make_option_safe(c("-y", "--gene_max_percent"), type="integer", default=NULL, help="gene max percent"),
+  make_option_safe(c("-z", "--filter_samples"), type="character", default=NULL, help="filter samples"),
+  make_option_safe(c("-A", "--rm_tissue"), type="character", default=NULL, help="rm tissue"),
+  make_option_safe(c("-B", "--rm_spots"), type="character", default=NULL, help="rm spots"),
+  make_option_safe(c("-C", "--rm_genes"), type="character", default=NULL, help="rm genes"),
+  make_option_safe(c("-D", "--rm_genes_regex"), type="character", default=NULL, help="rm genes regex"),
+  make_option_safe(c("-E", "--spot_percentage_regex"), type="character", default="^MT-", help="spot percentage regex"),
+  make_option_safe(c("-G", "--filter_data"), type="logical", default=TRUE, help="filter data")
 )
+
 # Parse the command line arguments
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
 # Assign the command line arguments to variables
 # Replace all the periods in the variable names with underscores
-input_data_archive <- ifelse(is.null(opt[["input_data_archive"]]), NA, opt[["input_data_archive"]])
-input_clinical_data <- ifelse(is.null(opt[["input_clinical_data"]]), NA, opt[["input_clinical_data"]])
-verbose <- ifelse(is.null(opt[["verbose"]]), NA, as.logical(opt[["verbose"]]))
-transform_data <- ifelse(is.null(opt[["transform_data"]]), NA, opt[["transform_data"]])
-filter_data <- ifelse(is.null(opt[["filter_data"]]), NA, opt[["filter_data"]])
-output_filename <- ifelse(is.null(opt[["output_filename"]]), NA, opt[["output_filename"]])
-pseudobulk <- ifelse(is.null(opt[["pseudobulk"]]), NA, as.logical(opt[["pseudobulk"]]))
-pseudobulk_max_var_genes <- ifelse(is.null(opt[["pseudobulk_max_var_genes"]]), NA, as.integer(opt[["pseudobulk_max_var_genes"]]))
-pseudobulk_plot_meta <- ifelse(is.null(opt[["pseudobulk_plot_meta"]]), NA, opt[["pseudobulk_plot_meta"]])
-pseudobulk_heatmap_num_displayed_genes <- ifelse(is.null(opt[["pseudobulk_heatmap_num_displayed_genes"]]), NA, as.integer(opt[["pseudobulk_heatmap_num_displayed_genes"]]))
-distribution_plot_meta <- ifelse(is.null(opt[["distribution_plot_meta"]]), NA, opt[["distribution_plot_meta"]])
-spot_min_reads <- ifelse(is.null(opt[["spot_min_reads"]]), NA, as.integer(opt[["spot_min_reads"]]))
-spot_min_genes <- ifelse(is.null(opt[["spot_min_genes"]]), NA, as.integer(opt[["spot_min_genes"]]))
-spot_max_reads <- ifelse(is.null(opt[["spot_max_reads"]]), NA, as.integer(opt[["spot_max_reads"]]))
-spot_max_genes <- ifelse(is.null(opt[["spot_max_genes"]]), NA, as.integer(opt[["spot_max_genes"]]))
-transform_scale_f <- ifelse(is.null(opt[["transform_scale_f"]]), NA, as.integer(opt[["transform_scale_f"]]))
-transform_num_regression_genes <- ifelse(is.null(opt[["transform_num_regression_genes"]]), NA, as.integer(opt[["transform_num_regression_genes"]]))
-transform_min_spots_or_cells <- ifelse(is.null(opt[["transform_min_spots_or_cells"]]), NA, as.integer(opt[["transform_min_spots_or_cells"]]))
-spot_min_percent <- ifelse(is.null(opt[["spot_min_percent"]]), NA, as.integer(opt[["spot_min_percent"]]))
-spot_max_percent <- ifelse(is.null(opt[["spot_max_percent"]]), NA, as.integer(opt[["spot_max_percent"]]))
-gene_min_reads <- ifelse(is.null(opt[["gene_min_reads"]]), NA, as.integer(opt[["gene_min_reads"]]))
-gene_max_reads <- ifelse(is.null(opt[["gene_max_reads"]]), NA, as.integer(opt[["gene_max_reads"]]))
-gene_min_spots <- ifelse(is.null(opt[["gene_min_spots"]]), NA, as.integer(opt[["gene_min_spots"]]))
-gene_max_spots <- ifelse(is.null(opt[["gene_max_spots"]]), NA, as.integer(opt[["gene_max_spots"]]))
-gene_min_percent <- ifelse(is.null(opt[["gene_min_percent"]]), NA, as.integer(opt[["gene_min_percent"]]))
-gene_max_percent <- ifelse(is.null(opt[["gene_max_percent"]]), NA, as.integer(opt[["gene_max_percent"]]))
-filter_samples <- ifelse(is.null(opt[["filter_samples"]]), NA, opt[["filter_samples"]])
-rm_tissue <- ifelse(is.null(opt[["rm_tissue"]]), NA, opt[["rm_tissue"]])
-rm_spots <- ifelse(is.null(opt[["rm_spots"]]), NA, opt[["rm_spots"]])
-rm_genes <- ifelse(is.null(opt[["rm_genes"]]), NA, opt[["rm_genes"]])
-rm_genes_regex <- ifelse(is.null(opt[["rm_genes_regex"]]), NA, opt[["rm_genes_regex"]])
-spot_percentage_genes_regex <- ifelse(is.null(opt[["spot_percentage_genes_regex"]]), NA, opt[["spot_percentage_genes_regex"]])
+input_data_archive <- if(is.null(opt[["input_data_archive"]])) NA else opt[["input_data_archive"]]
+input_clinical_data <- if(is.null(opt[["input_clinical_data"]])) NA else opt[["input_clinical_data"]]
+verbose <- if(is.null(opt[["verbose"]])) NA else as.logical(opt[["verbose"]])
+transform_data <- if(is.null(opt[["transform_data"]])) TRUE else opt[["transform_data"]]
+filter_data <- if(is.null(opt[["filter_data"]])) TRUE else opt[["filter_data"]]
+output_filename <- if(is.null(opt[["output_filename"]])) NA else opt[["output_filename"]]
+pseudobulk <- if(is.null(opt[["pseudobulk"]])) TRUE else as.logical(opt[["pseudobulk"]])
+pseudobulk_max_var_genes <- if(is.null(opt[["pseudobulk_max_var_genes"]])) 5000 else as.integer(opt[["pseudobulk_max_var_genes"]])
+pseudobulk_plot_meta <- if(is.null(opt[["pseudobulk_plot_meta"]])) 'patient_id' else opt[["pseudobulk_plot_meta"]]
+pseudobulk_heatmap_num_displayed_genes <- if(is.null(opt[["pseudobulk_heatmap_num_displayed_genes"]])) 30 else as.integer(opt[["pseudobulk_heatmap_num_displayed_genes"]])
+distribution_plot_meta <- if(is.null(opt[["distribution_plot_meta"]])) 'total_counts' else opt[["distribution_plot_meta"]]
+spot_min_reads <- if(is.null(opt[["spot_min_reads"]])) 0 else as.integer(opt[["spot_min_reads"]])
+spot_min_genes <- if(is.null(opt[["spot_min_genes"]])) 0 else as.integer(opt[["spot_min_genes"]])
+spot_max_reads <- if(is.null(opt[["spot_max_reads"]])) NULL else as.integer(opt[["spot_max_reads"]])
+spot_max_genes <- if(is.null(opt[["spot_max_genes"]])) NULL else as.integer(opt[["spot_max_genes"]])
+transform_scale_f <- if(is.null(opt[["transform_scale_f"]])) 10000 else as.integer(opt[["transform_scale_f"]])
+transform_num_regression_genes <- if(is.null(opt[["transform_num_regression_genes"]])) 3000 else as.integer(opt[["transform_num_regression_genes"]])
+transform_min_spots_or_cells <- if(is.null(opt[["transform_min_spots_or_cells"]])) 5 else as.integer(opt[["transform_min_spots_or_cells"]])
+spot_min_percent <- if(is.null(opt[["spot_min_percent"]])) 0 else as.integer(opt[["spot_min_percent"]])
+spot_max_percent <- if(is.null(opt[["spot_max_percent"]])) NULL else as.integer(opt[["spot_max_percent"]])
+gene_min_reads <- if(is.null(opt[["gene_min_reads"]])) 0 else as.integer(opt[["gene_min_reads"]])
+gene_max_reads <- if(is.null(opt[["gene_max_reads"]])) NULL else as.integer(opt[["gene_max_reads"]])
+gene_min_spots <- if(is.null(opt[["gene_min_spots"]])) 0 else as.integer(opt[["gene_min_spots"]])
+gene_max_spots <- if(is.null(opt[["gene_max_spots"]])) NULL else as.integer(opt[["gene_max_spots"]])
+gene_min_percent <- if(is.null(opt[["gene_min_percent"]])) 0 else as.integer(opt[["gene_min_percent"]])
+gene_max_percent <- if(is.null(opt[["gene_max_percent"]])) NULL else as.integer(opt[["gene_max_percent"]])
+filter_samples <- if(is.null(opt[["filter_samples"]])) NULL else opt[["filter_samples"]]
+rm_tissue <- if(is.null(opt[["rm_tissue"]])) NULL else opt[["rm_tissue"]]
+rm_spots <- if(is.null(opt[["rm_spots"]])) NULL else opt[["rm_spots"]]
+rm_genes <- if(is.null(opt[["rm_genes"]])) NULL else opt[["rm_genes"]]
+rm_genes_regex <- if(is.null(opt[["rm_genes_regex"]])) NULL else opt[["rm_genes_regex"]]
+spot_percentage_regex <- if(is.null(opt[["spot_percentage_regex"]])) "^MT-" else opt[["spot_percentage_regex"]]
+
+
+
 # start by making the data into an STList object
 # for that we need to gunzip input.data.archive
 # and then read the data into an STList object
@@ -110,38 +130,70 @@ if(length(input_clinical_data) <= 0){
     stop('No clinical file found in the data archive')
 }
 
-tnbc <- STlist(rnacounts=visium_folders, samples=input.clinical.data)
+tnbc <- STlist(rnacounts=visium_folders, samples=input_clinical_data)
 
 summarize_STlist(tnbc)
 
-png("distribution_plot_prefiltering.png")
-cp <- distribution_plots(tnbc, plot_type='violin', plot_meta=distribution_plot_meta)
+png("1distribution_plot_unfiltered.png")
+tryCatch({
+  cp <- distribution_plots(tnbc, plot_type='violin', plot_meta=distribution_plot_meta)
+}, error = function(e) {
+  print(paste("Error in distribution_plots:", e$message))
+})
+cp[['total_counts']]
 dev.off()
 
-cp[['total_counts']]
-
 if (filter_data){
-    tnbc <- filter_data(tnbc, spot_min_reads=spot_min_reads, spot_min_genes=spot_min_genes, spot_max_reads=spot_max_reads, spot_max_genes=spot_max_genes, gene_min_reads=gene_min_reads, gene_max_reads=gene_max_reads, gene_min_spots=gene_min_spots, gene_max_spots=gene_max_spots, gene_min_percent=gene_min_percent, gene_max_percent=gene_max_percent, spot_min_percent=spot_min_percent, spot_max_percent=spot_max_percent, filter_samples=filter_samples, rm_tissue=rm_tissue, rm_spots=rm_spots, rm_genes=rm_genes, rm_genes_regex=rm_genes_regex, spot_percentage_genes_regex=spot_percentage_genes_regex)
-    png("distribution_plot_postfiltering.png")
-    cp <- distribution_plots(tnbc, plot_type='violin', plot_meta=distribution_plot_meta)
+    tryCatch({
+         # Create a list of the default values
+        default_values <- list(spot_minreads=0, spot_mingenes=0, spot_maxreads=NULL, spot_maxgenes=NULL, gene_minreads=0, gene_maxreads=NULL, gene_minspots=0, gene_maxspots=NULL, gene_minpct=0, gene_maxpct=NULL, spot_minpct=0, spot_maxpct=NULL, samples=NULL, rm_tissue=NULL, rm_spots=NULL, rm_genes=NULL, rm_genes_expr=NULL, spot_pct_expr="^MT-")
+
+        # Create a list of the values passed to the function
+        passed_values <- list(spot_minreads=spot_min_reads, spot_mingenes=spot_min_genes, spot_maxreads=spot_max_reads, spot_maxgenes=spot_max_genes, gene_minreads=gene_min_reads, gene_maxreads=gene_max_reads, gene_minspots=gene_min_spots, gene_maxspots=gene_max_spots, gene_minpct=gene_min_percent, gene_maxpct=gene_max_percent, spot_minpct=spot_min_percent, spot_maxpct=spot_max_percent, samples=filter_samples, rm_tissue=rm_tissue, rm_spots=rm_spots, rm_genes=rm_genes, rm_genes_expr=rm_genes_regex, spot_pct_expr=spot_percentage_regex)
+
+        # Iterate over the names of the default_values and passed_values lists
+        for(name in names(default_values)) {
+            # Print the name, default value, and passed value
+            print(paste(name, ": def:", default_values[[name]], "   passed:", passed_values[[name]]))
+        }
+
+
+
+         tnbc <- filter_data(tnbc, spot_minreads=spot_min_reads, spot_mingenes=spot_min_genes, spot_maxreads=spot_max_reads, spot_maxgenes=spot_max_genes, gene_minreads=gene_min_reads, gene_maxreads=gene_max_reads, gene_minspots=gene_min_spots, gene_maxspots=gene_max_spots, gene_minpct=gene_min_percent, gene_maxpct=gene_max_percent, spot_minpct=spot_min_percent, spot_maxpct=spot_max_percent, samples=filter_samples, rm_tissue=rm_tissue, rm_spots=rm_spots, rm_genes=rm_genes, rm_genes_expr=rm_genes_regex, spot_pct_expr=spot_percentage_regex)
+
+         summarize_STlist(tnbc)
+    }, error = function(e) {
+      print(paste("Error in filter_data:", e$message))
+    })
+    print("post filter summary")
+    summarize_STlist(tnbc)
+    print("Create post filter png file now")
+    png("2distribution_plot_postfiltering.png")
+    tryCatch({
+          cp <- distribution_plots(tnbc, plot_type='violin', plot_meta=distribution_plot_meta)
+          cp[['total_counts']]
+    }, error = function(e) {
+          print(paste("Error in post filter distribution_plots:", e$message))
+    })
+    print("done second plot")
     dev.off()
 }
 
 if (pseudobulk) {
     tnbc <- pseudobulk_samples(tnbc, max_var_genes=pseudobulk_max_var_genes)
-    png("pseudobulk_pca.png")
+    png("3pseudobulk_pca.png")
     pseudobulk_pca_plot(tnbc, plot_meta=pseudobulk_plot_meta)
     dev.off()
-    png("pseudobulk_heatmap.png")
-    pseudobulk_heatmap(tnbc, plot_meta=pseudobulk_plot_meta, num_displayed_genes=pseudobulk_heatmap_num_displayed_genes)
+    png("4pseudobulk_heatmap.png")
+    pseudobulk_heatmap(tnbc, plot_meta=pseudobulk_plot_meta, hm_display_genes=pseudobulk_heatmap_num_displayed_genes)
     dev.off()
 }
 
 if (transform_data) {
-    tnbc <- transform_data(tnbc, scale_f=transform_scale_f, num_regression_genes=transform_num_regression_genes, min_spots_or_cells=transform_min_spots_or_cells)
+    tnbc <- transform_data(tnbc, scale_f=transform_scale_f, sct_n_regr_genes=transform_num_regression_genes, sct_min_cells=transform_min_spots_or_cells)
 }
 
-
+print(paste("Saving the data to", output_filename))
 saveRDS(tnbc, output_filename)
 
 
