@@ -145,8 +145,7 @@ dev.off()
 
 if (filter_data){
     tryCatch({
-         # Create a list of the default values
-        default_values <- list(spot_minreads=0, spot_mingenes=0, spot_maxreads=NULL, spot_maxgenes=NULL, gene_minreads=0, gene_maxreads=NULL, gene_minspots=0, gene_maxspots=NULL, gene_minpct=0, gene_maxpct=NULL, spot_minpct=0, spot_maxpct=NULL, samples=NULL, rm_tissue=NULL, rm_spots=NULL, rm_genes=NULL, rm_genes_expr=NULL, spot_pct_expr="^MT-")
+
 
         # Create a list of the values passed to the function
         passed_values <- list(spot_minreads=spot_min_reads, spot_mingenes=spot_min_genes, spot_maxreads=spot_max_reads, spot_maxgenes=spot_max_genes, gene_minreads=gene_min_reads, gene_maxreads=gene_max_reads, gene_minspots=gene_min_spots, gene_maxspots=gene_max_spots, gene_minpct=gene_min_percent, gene_maxpct=gene_max_percent, spot_minpct=spot_min_percent, spot_maxpct=spot_max_percent, samples=filter_samples, rm_tissue=rm_tissue, rm_spots=rm_spots, rm_genes=rm_genes, rm_genes_expr=rm_genes_regex, spot_pct_expr=spot_percentage_regex)
@@ -154,7 +153,7 @@ if (filter_data){
         # Iterate over the names of the default_values and passed_values lists
         for(name in names(default_values)) {
             # Print the name, default value, and passed value
-            print(paste(name, ": def:", default_values[[name]], "   passed:", passed_values[[name]]))
+            print(paste(name, ": def:",  "   passed:", passed_values[[name]]))
         }
 
 
