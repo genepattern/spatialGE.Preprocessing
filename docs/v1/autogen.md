@@ -11,170 +11,97 @@ The `spatialGE.Preprocessing` module is part of the spatialGE package, designed 
 - **Categories:** spatial transcriptomics
 - **Documentation:** [spatialGE.Preprocessing Documentation](https://genepattern.github.io/spatialGE.Preprocessing/v0.4/)
 
-## Description
-The `spatialGE.Preprocessing` module prepares spatial transcriptomic data by ingesting, filtering, transforming, and performing pseudobulk operations. It supports various preprocessing tasks required for spatially-resolved transcriptomic experiments.
+## Input Files
 
-## Input Parameters
+- **Input Data Archive:**
+  - *Description:* Input data archive in gz format. Should match the directory structure as defined by spatialGE.
 
-1. **Input Data Archive:**
-   - Type: `File`
-   - Description: Input data archive in gz format. Should match the directory structure as defined by spatialGE.
-   - Parameter Name: `input.data.archive`
+- **Input Clinical Data:**
+  - *Description:* Metadata associated with each sample in a csv file. The sample names must match the names of the folders containing the data.
 
-2. **Input Clinical Data:**
-   - Type: `File`
-   - Description: Metadata associated with each sample in a csv file. The sample names must match the names of the folders containing the data.
-   - Parameter Name: `input.clinical.data`
+## Output Files
 
-3. **Verbose Output:**
-   - Type: `String`
-   - Description: Output additional files including summarized STList, distribution plots before and after filtering, and pseudobulk PCA plot and heatmap.
-   - Parameter Name: `verbose`
+- **Output Files:**
+  - *Description:* Various output files including summarized STList, distribution plots before and after filtering, and pseudobulk PCA plot and heatmap.
 
-4. **Transform Data:**
-   - Type: `String`
-   - Description: Type of data transformation to apply (`None`, `Log`, `SCT`).
-   - Parameter Name: `transform.data`
+## Parameters
 
-5. **Output Filename:**
-   - Type: `String`
-   - Description: The basename to use for the output file.
-   - Parameter Name: `output.filename`
+### Inputs and Outputs
 
-6. **Perform Pseudobulk:**
-   - Type: `String`
-   - Description: Perform pseudobulk analysis (combining counts from each sample) and perform PCA.
-   - Parameter Name: `pseudobulk`
+| Name                  | Description                                                                 | Default Value                    | Type      |
+|-----------------------|-----------------------------------------------------------------------------|----------------------------------|-----------|
+| `input.data.archive`  | Input data archive in gz format. Should match the directory structure as defined by spatialGE. | -                                | File      |
+| `input.clinical.data` | Metadata associated with each sample in a csv file. The sample names must match the names of the folders containing the data. | -                                | File      |
+| `output.filename`     | The basename to use for the output file.                                     | <input.data.archive_basename>.Rdata | String    |
 
-7. **Max Variable Genes in Pseudobulk:**
-   - Type: `Integer`
-   - Description: The number of most variable genes (standard deviation) to use in pseudobulk analysis.
-   - Parameter Name: `pseudobulk.max.var.genes`
+### Filtering Parameters
 
-8. **Pseudobulk Plot Metadata:**
-   - Type: `String`
-   - Description: Name of the variable in the sample metadata to color points in the PCA plot.
-   - Parameter Name: `pseudobulk.plot.meta`
+| Name            | Description                                                                 | Default Value | Type      |
+|-----------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `filter.data`   | Perform data filtering.                                                     | -             | String    |
 
-9. **Number of Genes in Pseudobulk Heatmap:**
-   - Type: `Integer`
-   - Description: The number of genes to display in the pseudobulk heatmap.
-   - Parameter Name: `pseudobulk.heatmap.num.displayed.genes`
+#### Spot Filtering
 
-10. **Distribution Plot Metadata:**
-    - Type: `Integer`
-    - Description: Vector of variables in sample metadata to plot distributions.
-    - Parameter Name: `distribution.plot.meta`
+| Name                    | Description                                                                 | Default Value | Type      |
+|-------------------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `spot.min.reads`        | The minimum number of total reads for a spot to be retained.                  | 5000          | Integer   |
+| `spot.max.reads`        | The maximum number of total reads for a spot to be retained.                  | 15000         | Integer   |
+| `spot.min.genes`        | The minimum number of non-zero counts for a spot to be retained.              | 1000          | Integer   |
+| `spot.max.genes`        | The maximum number of non-zero counts for a spot to be retained.              | 1000          | Integer   |
+| `spot.min.percent`      | The minimum percentage of counts for features defined by spot_pct_expr for a spot to be retained. | 0             | Integer   |
+| `spot.max.percent`      | The maximum percentage of counts for features defined by spot_pct_expr for a spot to be retained. | -             | Integer   |
 
-11. **Minimum Reads per Spot (Filtering):**
-    - Type: `Integer`
-    - Description: The minimum number of total reads for a spot to be retained.
-    - Parameter Name: `spot.min.reads`
+#### Gene Filtering
 
-12. **Minimum Genes per Spot (Filtering):**
-    - Type: `Integer`
-    - Description: The minimum number of non-zero counts for a spot to be retained.
-    - Parameter Name: `spot.min.genes`
+| Name                    | Description                                                                 | Default Value | Type      |
+|-------------------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `gene.min.reads`        | The minimum number of total reads for a gene to be retained.                  | 0             | Integer   |
+| `gene.max.reads`        | The maximum number of total reads for a gene to be retained.                  | -             | Integer   |
+| `gene.min.spots`        | The minimum number of spots with non-zero counts for a gene to be retained.   | 0             | Integer   |
+| `gene.max.spots`        | The maximum number of spots with non-zero counts for a gene to be retained.   | -             | Integer   |
+| `gene.min.percent`      | The minimum percentage of spots with non-zero counts for a gene to be retained. | 0             | Integer   |
+| `gene.max.percent`      | The maximum percentage of spots with non-zero counts for a gene to be retained. | -             | Integer   |
 
-13. **Maximum Reads per Spot (Filtering):**
-    - Type: `Integer`
-    - Description: The maximum number of total reads for a spot to be retained.
-    - Parameter Name: `spot.max.reads`
+#### Other Filtering
 
-14. **Maximum Genes per Spot (Filtering):**
-    - Type: `Integer`
-    - Description: The maximum number of non-zero counts for a spot to be retained.
-    - Parameter Name: `spot.max.genes`
+| Name                       | Description                                                                 | Default Value | Type      |
+|----------------------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `filter.samples`           | Samples (as in names(x@counts)) to perform filtering.                        | -             | String    |
+| `rm.tissue`                | Sample (as in names(x@counts)) to remove from STlist.                         | -             | String    |
+| `rm.spots`                 | Vector of spot/cell IDs to remove.                                           | -             | String    |
+| `rm.genes`                 | Vector of gene names to remove from STlist.                                   | -             | String    |
+| `rm.genes.regex`           | A regular expression that matches genes to remove.                            | -             | String    |
+| `spot.percentage.genes.regex` | An expression to use with spot_minpct and spot_maxpct. By default '^MT-'.     | -             | Integer   |
 
-15. **Logarithmic Transformation Scale Factor:**
-    - Type: `Integer`
-    - Description: The scale factor used in logarithmic transformation.
-    - Parameter Name: `transform.scale.f`
+### Pseudobulk Parameters
 
-16. **Number of Regression Genes for SCTransform:**
-    - Type: `Integer`
-    - Description: The number of genes to be used in the regression model during SCTransform.
-    - Parameter Name: `transform.num.regression.genes`
+| Name                              | Description                                                                 | Default Value | Type      |
+|-----------------------------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `pseudobulk`                      | Perform pseudobulk analysis (combining counts from each sample) and perform PCA. | False         | String    |
+| `pseudobulk.max.var.genes`        | The number of most variable genes (standard deviation) to use in pseudobulk analysis. | -             | Integer   |
+| `pseudobulk.plot.meta`            | Name of the variable in the sample metadata to color points in the PCA plot. | -             | String    |
+| `pseudobulk.heatmap.num.displayed.genes` | The number of genes to display in the pseudobulk heatmap.                    | 30            | Integer   |
 
-17. **Minimum Spots or Cells for SCTransform:**
-    - Type: `Integer`
-    - Description: The minimum number of spots or cells to be used in the regression model fit by SCTransform.
-    - Parameter Name: `transform.min.spots.or.cells`
+### Transform Parameters
 
-18. **Minimum Percentage of Counts per Spot (Filtering):**
-    - Type: `Integer`
-    - Description: The minimum percentage of counts for features defined by spot_pct_expr for a spot to be retained.
-    - Parameter Name: `spot.min.percent`
+| Name                              | Description                                                                 | Default Value | Type      |
+|-----------------------------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `transform.data`                  | Type of data transformation to apply (`None`, `Log`, `SCT`).                 | None          | String    |
+| `transform.scale.f`               | The scale factor used in logarithmic transformation.                         | 10000         | Integer   |
+| `transform.num.regression.genes`  | The number of genes to be used in the regression model during SCTransform.    | 5000          | Integer   |
+| `transform.min.spots.or.cells`    | The minimum number of spots or cells to be used in the regression model fit by SCTransform. | 5             | Integer   |
 
-19. **Maximum Percentage of Counts per Spot (Filtering):**
-    - Type: `Integer`
-    - Description: The maximum percentage of counts for features defined by spot_pct_expr for a spot to be retained.
-    - Parameter Name: `spot.max.percent`
+### Other Parameters
 
-20. **Minimum Reads per Gene (Filtering):**
-    - Type: `Integer`
-    - Description: The minimum number of total reads for a gene to be retained.
-    - Parameter Name: `gene.min.reads`
-
-21. **Maximum Reads per Gene (Filtering):**
-    - Type: `Integer`
-    - Description: The maximum number of total reads for a gene to be retained.
-    - Parameter Name: `gene.max.reads`
-
-22. **Minimum Spots per Gene (Filtering):**
-    - Type: `Integer`
-    - Description: The minimum number of spots with non-zero counts for a gene to be retained.
-    - Parameter Name: `gene.min.spots`
-
-23. **Maximum Spots per Gene (Filtering):**
-    - Type: `Integer`
-    - Description: The maximum number of spots with non-zero counts for a gene to be retained.
-    - Parameter Name: `gene.max.spots`
-
-24. **Minimum Percentage of Spots per Gene (Filtering):**
-    - Type: `Integer`
-    - Description: The minimum percentage of spots with non-zero counts for a gene to be retained.
-    - Parameter Name: `gene.min.percent`
-
-25. **Maximum Percentage of Spots per Gene (Filtering):**
-    - Type: `Integer`
-    - Description: The maximum percentage of spots with non-zero counts for a gene to be retained.
-    - Parameter Name: `gene.max.percent`
-
-26. **Samples for Filtering:**
-    - Type: `String`
-    - Description: Samples (as in names(x@counts)) to perform filtering.
-    - Parameter Name: `filter.samples`
-
-27. **Remove Tissue:**
-    - Type: `String`
-    - Description: Sample (as in names(x@counts)) to remove from STlist.
-    - Parameter Name: `rm.tissue`
-
-28. **Remove Spots or Cells:**
-    - Type: `String`
-    - Description: Vector of spot/cell IDs to remove.
-    - Parameter Name: `rm.spots`
-
-29. **Remove Genes:**
-    - Type: `String`
-    - Description: Vector of gene names to remove from STlist.
-    - Parameter Name: `rm.genes`
-
-30. **Remove Genes by Regex:**
-    - Type: `String`
-    - Description: A regular expression that matches genes to remove.
-    - Parameter Name: `rm.genes.regex`
-
-31. **Spot Percentage Genes Regex:**
-    - Type: `Integer`
-    - Description: An expression to use with spot_minpct and spot_maxpct. By default '^MT-'.
-    - Parameter Name: `spot.percentage.genes.regex`
+| Name                              | Description                                                                 | Default Value | Type      |
+|-----------------------------------|-----------------------------------------------------------------------------|---------------|-----------|
+| `verbose`                         | Output additional files including summarized STList, distribution plots before and after filtering, and pseudobulk PCA plot and heatmap. | False         | String    |
+| `distribution.plot.meta`          | Vector of variables in sample metadata to plot distributions.                 | -             | Integer   |
 
 ## Usage
 
 1. **Upload Input Data:** Upload your spatial transcriptomic data archive (`gz` format) and clinical metadata.
-   
+
 2. **Set Parameters:** Configure the module parameters according to your preprocessing requirements, including data transformation options and filtering criteria.
 
 3. **Run the Module:** Click "Run" to execute the preprocessing pipeline.
