@@ -1,4 +1,3 @@
-#!/usr/bin/env Rscript
 
 # Load the getopt library
 library(optparse)
@@ -107,7 +106,7 @@ spot_percentage_regex <- if(is.null(opt[["spot_percentage_regex"]])) "^MT-" else
 
 # Create a temporary directory
 temp_dir <- tempdir()
-print(temp_dir)
+
 # Create the path to the new file location in the temporary directory
 new_file_location <- file.path(temp_dir, basename(input_data_archive))
 
@@ -134,7 +133,7 @@ tnbc <- STlist(rnacounts=visium_folders, samples=input_clinical_data)
 
 summarize_STlist(tnbc)
 
-png("1distribution_plot_unfiltered.png")
+png(paste(output_filename, "_distribution_plot_unfiltered.png", sep=""))
 tryCatch({
   cp <- distribution_plots(tnbc, plot_type='violin', plot_meta=distribution_plot_meta)
 }, error = function(e) {
@@ -146,54 +145,42 @@ dev.off()
 if (filter_data){
     tryCatch({
 
-
-        # Create a list of the values passed to the function
-        passed_values <- list(spot_minreads=spot_min_reads, spot_mingenes=spot_min_genes, spot_maxreads=spot_max_reads, spot_maxgenes=spot_max_genes, gene_minreads=gene_min_reads, gene_maxreads=gene_max_reads, gene_minspots=gene_min_spots, gene_maxspots=gene_max_spots, gene_minpct=gene_min_percent, gene_maxpct=gene_max_percent, spot_minpct=spot_min_percent, spot_maxpct=spot_max_percent, samples=filter_samples, rm_tissue=rm_tissue, rm_spots=rm_spots, rm_genes=rm_genes, rm_genes_expr=rm_genes_regex, spot_pct_expr=spot_percentage_regex)
-
-        # Iterate over the names of the default_values and passed_values lists
-        for(name in names(default_values)) {
-            # Print the name, default value, and passed value
-            print(paste(name, ": def:",  "   passed:", passed_values[[name]]))
-        }
-
-
-
          tnbc <- filter_data(tnbc, spot_minreads=spot_min_reads, spot_mingenes=spot_min_genes, spot_maxreads=spot_max_reads, spot_maxgenes=spot_max_genes, gene_minreads=gene_min_reads, gene_maxreads=gene_max_reads, gene_minspots=gene_min_spots, gene_maxspots=gene_max_spots, gene_minpct=gene_min_percent, gene_maxpct=gene_max_percent, spot_minpct=spot_min_percent, spot_maxpct=spot_max_percent, samples=filter_samples, rm_tissue=rm_tissue, rm_spots=rm_spots, rm_genes=rm_genes, rm_genes_expr=rm_genes_regex, spot_pct_expr=spot_percentage_regex)
 
          summarize_STlist(tnbc)
     }, error = function(e) {
       print(paste("Error in filter_data:", e$message))
     })
-    print("post filter summary")
-    summarize_STlist(tnbc)
-    print("Create post filter png file now")
-    png("2distribution_plot_postfiltering.png")
+    print(summarize_STlist(tnbc))
+    png(paste(output_filename, "_distribution_plot_postfiltering.png",sep=""))
     tryCatch({
           cp <- distribution_plots(tnbc, plot_type='violin', plot_meta=distribution_plot_meta)
-          cp[['total_counts']]
+          print(cp[['total_counts']])
     }, error = function(e) {
           print(paste("Error in post filter distribution_plots:", e$message))
     })
-    print("done second plot")
     dev.off()
 }
 
 if (pseudobulk) {
     tnbc <- pseudobulk_samples(tnbc, max_var_genes=pseudobulk_max_var_genes)
-    png("3pseudobulk_pca.png")
-    pseudobulk_pca_plot(tnbc, plot_meta=pseudobulk_plot_meta)
+    png(paste(output_filename, "_pseudobulk_pca.png", sep=""))
+    print("B TRANSFORM DATA")
+    pbpca <- pseudobulk_pca_plot(tnbc, plot_meta=pseudobulk_plot_meta)
+    print(pbpca)
     dev.off()
-    png("4pseudobulk_heatmap.png")
-    pseudobulk_heatmap(tnbc, plot_meta=pseudobulk_plot_meta, hm_display_genes=pseudobulk_heatmap_num_displayed_genes)
+    png(paste(output_filename, "_pseudobulk_heatmap.png",sep=""))
+    pbhm <- pseudobulk_heatmap(tnbc, plot_meta=pseudobulk_plot_meta, hm_display_genes=pseudobulk_heatmap_num_displayed_genes)
+    print(pbhm)
     dev.off()
 }
 
 if (transform_data) {
-    tnbc <- transform_data(tnbc, scale_f=transform_scale_f, sct_n_regr_genes=transform_num_regression_genes, sct_min_cells=transform_min_spots_or_cells)
+    tnbc <- transform_data(tnbc, scale_f=transform_scale_f, sct_n_regr_genes=transform_num_regression_genes, sct_min_cells=transform_min_spots_or_cells )
 }
 
 print(paste("Saving the data to", output_filename))
-saveRDS(tnbc, output_filename)
+saveRDS(tnbc, paste(output_filename, ".rds"))
 
 
 

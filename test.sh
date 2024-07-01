@@ -3,7 +3,7 @@
 # Define the required arguments
 input_data_archive="data/archive_name.tar.gz"
 input_clinical_data="data/sample_clinical.tsv"
-output_filename="out.Rds"
+output_filename="output_"
 verbose="TRUE" # or "FALSE"
 transform_data="TRUE"
 pseudobulk="TRUE" # or "FALSE"
