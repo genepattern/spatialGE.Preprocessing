@@ -8,7 +8,7 @@ The `spatialGE.Preprocessing` module is part of the spatialGE package, designed 
 - **Authors:** Edwin Huang, Ted Liefeld, Thorin Tabor, Michael Reich; UCSD - Mesirov Lab
 - **Categories:** spatial transcriptomics
 - **Source repository:** [spatialGE.Preprocessing on GitHub](https://github.com/genepattern/spatialGE.Preprocessing)
-- **Contact**: [GenePattern Help Forum Link](https://groups.google.com/forum/?utm_medium=email&utm_source=footer#!forum/genepattern-help)
+- **Contact**: [GenePattern Help Forum](https://groups.google.com/forum/?utm_medium=email&utm_source=footer#!forum/genepattern-help)
 
 ## Input Files
 
