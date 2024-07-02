@@ -28,7 +28,7 @@ option_list = list(
   make_option_safe(c("-a", "--input_data_archive"), type="character",  help="input data archive"),
   make_option_safe(c("-b", "--input_clinical_data"), type="character",  help="input clinical data"),
   make_option_safe(c("-c", "--verbose"), type="logical", default=FALSE, help="verbose"),
-  make_option_safe(c("-d", "--transform_data"), type="logical", default=TRUE, help="transform data"),
+  make_option_safe(c("-d", "--transform_data"), type="character", default="None", help="transform data"),
   make_option_safe(c("-e", "--output_filename"), type="character",  help="output filename"),
   make_option_safe(c("-f", "--pseudobulk"), type="logical", default=TRUE, help="pseudobulk"),
   make_option_safe(c("-g", "--pseudobulk_max_var_genes"), type="integer", default=5000, help="pseudobulk max var genes"),
@@ -68,7 +68,8 @@ opt = parse_args(opt_parser)
 input_data_archive <- if(is.null(opt[["input_data_archive"]])) NA else opt[["input_data_archive"]]
 input_clinical_data <- if(is.null(opt[["input_clinical_data"]])) NA else opt[["input_clinical_data"]]
 verbose <- if(is.null(opt[["verbose"]])) NA else as.logical(opt[["verbose"]])
-transform_data <- if(is.null(opt[["transform_data"]])) TRUE else opt[["transform_data"]]
+transform_data <- if(is.null(opt[["transform_data"]]) || opt[["transform_data"]] == "None") FALSE else TRUE
+transform_data_method <- if(is.null(opt[["transform_data"]]) || opt[["transform_data"]] == "None") "sct" else opt[["transform_data"]]
 filter_data <- if(is.null(opt[["filter_data"]])) TRUE else opt[["filter_data"]]
 output_filename <- if(is.null(opt[["output_filename"]])) NA else opt[["output_filename"]]
 pseudobulk <- if(is.null(opt[["pseudobulk"]])) TRUE else as.logical(opt[["pseudobulk"]])
@@ -176,7 +177,7 @@ if (pseudobulk) {
 }
 
 if (transform_data) {
-    tnbc <- transform_data(tnbc, scale_f=transform_scale_f, sct_n_regr_genes=transform_num_regression_genes, sct_min_cells=transform_min_spots_or_cells )
+    tnbc <- transform_data(tnbc, method=tolower(transform_data_method), scale_f=transform_scale_f, sct_n_regr_genes=transform_num_regression_genes, sct_min_cells=transform_min_spots_or_cells )
 }
 
 print(paste("Saving the data to", output_filename))
