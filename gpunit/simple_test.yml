@@ -10,11 +10,19 @@
 name: "spatialGE.Preprocessing - Basic test"
 module: spatialGE.Preprocessing
 params:
-    filename: "../data/data_placeholder.txt"
-    add_custom_message: "True"
-    message_to_add: "This message has been added."
-    output_filename: "gp_unit_test_file"
-assertions:
+    input.data.archive: "../data/archive_name.tar.gz"
+    input.clinical.data: "../data/sample_clinical.tsv"
+    output.filename: "output_"
+    transform_data: "Log"
+    pseudobulk: "True"
+    pseudobulk_plot_meta: "patient_id"
+    filter.data: "TRUE"
+    distribution.plot.meta: "total_counts"
+    spot.min.reads: 5000
+    spot.min.genes: 1000
+    spot.max.reads: 150000
+    job.memory: "16Gb"
+    job.cpuCount: 4
 assertions:
     jobStatus: success
     #    diffCmd: diff <%gpunit.diffStripTrailingCR%> -q
