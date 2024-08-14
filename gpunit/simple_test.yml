@@ -1,31 +1,51 @@
-# Run this gpunit loccaly by calling:
-# ant -f ${GPUNIT_HOME}/build.xml -Dgpunit.diffStripTrailingCR="--strip-trailing-cr" -Dgp.host="127.0.0.1" -Dgp.url="http://127.0.0.1:8080" -Dgp.user="edjuaro@gmail.com" -Dgp.password="" -Dgpunit.testfolder=`pwd` gpunit
-# OR using gp-beta-ami:
-# ant -f ${GPUNIT_HOME}/build.xml -Dgpunit.diffStripTrailingCR="--strip-trailing-cr" -Dgp.host="gp-beta-ami.genepattern.org" -Dgp.url="https://gp-beta-ami.genepattern.org" -Dgp.user="edjuaro" -Dgp.password="**PUT_PASSWORD_HERE" -Dgpunit.testfolder=`pwd` gpunit
 
-#
-# Note: this test uses a custom diff command
-#
-
-name: "spatialGE.Preprocessing - Basic test"
+name: gpunit_95225
+# description: created from job 95225
+# ET(ms): 551000# from server:  https://beta.genepattern.org/gp/
 module: spatialGE.Preprocessing
-params:
-    input.data.archive: "../data/archive_name.tar.gz"
-    input.clinical.data: "../data/sample_clinical.tsv"
-    output.filename: "output_"
-    transform_data: "Log"
-    pseudobulk: "True"
-    pseudobulk_plot_meta: "patient_id"
-    filter.data: "TRUE"
-    distribution.plot.meta: "total_counts"
-    spot.min.reads: 5000
-    spot.min.genes: 1000
-    spot.max.reads: 150000
-    job.memory: "16Gb"
-    job.cpuCount: 4
-assertions:
+# lsid: urn:lsid:genepattern.org:module.analysis:00460:999999999
+params: 
+    "input.data.archive": "data/archive_name.tar.gz"
+    "verbose": "False"
+    "transform.data": "Log"
+    "output.filename": "output_"
+    "pseudobulk": "True"
+    "pseudobulk.max.var.genes": "5000"
+    "pseudobulk.plot.meta": "patient_id"
+    "pseudobulk.heatmap.num.displayed.genes": "30"
+    "distribution.plot.meta": "total_counts"
+    "spot.min.reads": "5000"
+    "spot.min.genes": "1000"
+    "spot.max.reads": "150000"
+    "spot.max.genes": ""
+    "transform.scale.f": "10000"
+    "transform.num.regression.genes": "3000"
+    "transform.min.spots.or.cells": "5"
+    "spot.min.percent": "0"
+    "spot.max.percent": ""
+    "gene.min.reads": "0"
+    "gene.max.reads": ""
+    "gene.min.spots": "0"
+    "gene.max.spots": ""
+    "gene.min.percent": "0"
+    "gene.max.percent": ""
+    "filter.samples": ""
+    "rm.tissue": ""
+    "rm.spots": ""
+    "rm.genes": ""
+    "rm.genes.regex": ""
+    "spot.percentage.genes.regex": ""
+    "input.clinical.data": "data/sample_clinical.tsv"
+    "filter.data": "True"
+
+assertions: 
     jobStatus: success
-    #    diffCmd: diff <%gpunit.diffStripTrailingCR%> -q
-    #    files:
-    #        "gp_unit_test_file.txt":
-    #            diff: "output/basic_test/created_file_ground_truth.txt"
+    files: 
+        output_.rds: !!null
+        output__distribution_plot_postfiltering.png: !!null
+        output__distribution_plot_unfiltered.png: !!null
+        output__pseudobulk_heatmap.png: !!null
+        output__pseudobulk_pca.png: !!null
+        stderr.txt: !!null
+        stdout.txt: !!null
+        gp_execution_log.txt: !!null

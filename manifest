@@ -467,6 +467,6 @@ p32_value=True;False
 privacy=public
 quality=production
 taskDoc=
-taskType=administration
+taskType=spatial transcriptomics
 userid=bhill@broadinstitute.org
 version=Updated to use GitHub Pages doc url rather than doc.html
