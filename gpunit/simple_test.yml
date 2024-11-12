@@ -5,7 +5,7 @@ name: gpunit_95225
 module: spatialGE.Preprocessing
 # lsid: urn:lsid:genepattern.org:module.analysis:00460:999999999
 params: 
-    "input.data.archive": "data/archive_name.tar.gz"
+    "input.data.archive": "https://datasets.genepattern.org/data/module_support_files/spatialge/spatialge.preprocessing/archive_name.tar.gz"
     "verbose": "False"
     "transform.data": "Log"
     "output.filename": "output_"
