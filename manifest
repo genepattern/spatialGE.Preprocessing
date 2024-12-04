@@ -7,7 +7,7 @@ categories=spatial transcriptomics
 #commandLine when run with source in Docker container:
 commandLine=Rscript /spatialGE/spatialge_preprocessing_wrapper.R   <input.data.archive> <input.clinical.data>   <verbose>   <transform.data>   <output.filename>   <pseudobulk>   <pseudobulk.max.var.genes>   <pseudobulk.plot.meta>   <pseudobulk.heatmap.num.displayed.genes>   <distribution.plot.meta>   <spot.min.reads>   <spot.min.genes>   <spot.max.reads>   <spot.max.genes>  <transform.scale.f>  <transform.num.regression.genes>  <transform.min.spots.or.cells>  <spot.min.percent>  <spot.max.percent>  <gene.min.reads>  <gene.max.reads>  <gene.min.spots>  <gene.max.spots>  <gene.min.percent>  <gene.max.percent>  <filter.samples>  <rm.tissue>  <rm.spots>  <rm.genes>  <rm.genes.regex>  <spot.percentage.genes.regex>  <filter.data>
 
-job.docker.image=genepattern/spatialgp.preprocessing:0.4
+job.docker.image=genepattern/spatialgp.preprocessing:0.5
 src.repo=https://github.com/genepattern/spatialGE.Preprocessing
 cpuType=any
 description=The package spatialGE provides a collection of tools for the visualization of gene expression from spatially-resolved transcriptomic experiments. The data input methods have been designed so that any data can be analyzed as long as it contains gene expression counts per region of interest (ROI), spot, or cell, and the spatial coordinates of those ROIs, spots, or cells, as it is generated in platforms such as GeoMx, Visium, and CosMx-SMI. The spatialge.Preprocessing module performs initial data ingestion, filtering, transform and pseudo-bulk operations to prepare data for further processing. Order of operations are: ingestion, filter, pseudobulk, transform.
