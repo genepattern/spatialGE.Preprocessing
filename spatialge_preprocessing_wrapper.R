@@ -99,7 +99,11 @@ rm_genes <- if(is.null(opt[["rm_genes"]])) NULL else opt[["rm_genes"]]
 rm_genes_regex <- if(is.null(opt[["rm_genes_regex"]])) NULL else opt[["rm_genes_regex"]]
 spot_percentage_regex <- if(is.null(opt[["spot_percentage_regex"]])) "^MT-" else opt[["spot_percentage_regex"]]
 
-
+print("XXX")
+#GP-9782 strip off the .tar if present in the filename
+print(paste("before stripping tar off --- ", output_filename))
+output_filename <- gsub("\\.tar$", "", output_filename)
+print(paste("AFTER stripping tar off --- ", output_filename))
 
 # start by making the data into an STList object
 # for that we need to gunzip input.data.archive
@@ -180,9 +184,8 @@ if (transform_data) {
     tnbc <- transform_data(tnbc, method=tolower(transform_data_method), scale_f=transform_scale_f, sct_n_regr_genes=transform_num_regression_genes, sct_min_cells=transform_min_spots_or_cells )
 }
 
-print(paste("Saving the data to", output_filename))
-saveRDS(tnbc, paste(output_filename, ".rds",sep=""))
-
+print(paste("POST Saving the data to", output_filename))
+saveRDS(tnbc, paste(output_filename, ".rds", sep=""))
 
 
 # At the end of the script, delete the temporary directory and its contents
