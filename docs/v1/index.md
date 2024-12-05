@@ -104,7 +104,7 @@ The `spatialGE.Preprocessing` module is part of the spatialGE package, designed 
 [Example data on GitHub](https://github.com/genepattern/spatialGE.Preprocessing/tree/main/data)
 
 ## License
-spatialGE.Preprocessing is distributed under a modified BSD license available at [https://github.com/genepattern/ExampleModule/blob/v2/LICENSE](https://github.com/genepattern/spatialGE.Preprocessing/blob/main/LICENSE).
+spatialGE.Preprocessing is distributed under a modified BSD license available at [[https://github.com/genepattern/ExampleModule/blob/v2/LICENSE](https://github.com/genepattern/spatialGE.Preprocessing/blob/main/LICENSE)](https://github.com/genepattern/spatialGE.Preprocessing/blob/main/LICENSE).
 
 | Version | Release Date | Description                                 |
 ----------|--------------|---------------------------------------------|
