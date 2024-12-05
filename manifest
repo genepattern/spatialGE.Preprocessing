@@ -469,7 +469,7 @@ quality=production
 taskDoc=
 taskType=spatial transcriptomics
 userid=bhill@broadinstitute.org
-version=Updated to use GitHub Pages doc url rather than doc.html
+version=Strip .tar from output filenames if its part of the input filename.  Stop putting .rds on the rds file twice.
 
 job.memory=8Gb
 
