@@ -60,7 +60,7 @@ p3_value=None\=None;Log\=Log;SCT\=SCT
 
 p4_MODE=
 p4_TYPE=TEXT
-p4_default_value=<input.data.archive_basename>.rds
+p4_default_value=<input.data.archive_basename>
 p4_description=The basename to use for output file (no need to add ".txt" at the end)
 p4_fileFormat=
 p4_flag=
