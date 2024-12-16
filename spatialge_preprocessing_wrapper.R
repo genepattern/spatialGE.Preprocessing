@@ -3,9 +3,10 @@
 library(optparse)
 library('ggplot2')
 library('dplyr')
-library( 'stringr')
+library('stringr')
 library('spatialGE')
 library('magrittr')
+library(jsonlite)
 
 make_option_safe <- function(...) {
   res <- tryCatch(
@@ -186,6 +187,10 @@ if (transform_data) {
 
 print(paste("POST Saving the data to", output_filename))
 saveRDS(tnbc, paste(output_filename, ".rds", sep=""))
+
+# Write the samples.json file
+summ_df = summarize_STlist(tnbc)
+jsonlite::write_json(summ_df, path='samples.json')
 
 
 # At the end of the script, delete the temporary directory and its contents
