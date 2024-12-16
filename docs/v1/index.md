@@ -85,7 +85,7 @@ The `spatialGE.Preprocessing` module is part of the spatialGE package, designed 
 
 | Name                              | Description                                                                 | Default Value | Type      |
 |-----------------------------------|-----------------------------------------------------------------------------|---------------|-----------|
-| `transform data`                  | Type of data transformation to apply (`None`, `Log`, `SCT`).                 | None          | String    |
+| `transform data`                  | Type of data transformation to apply (`None`, `Log`, `SCT`).                 | Log          | String    |
 | `transform scale f`               | The scale factor used in logarithmic transformation.                         | 10000         | Integer   |
 | `transform num regression genes`  | The number of genes to be used in the regression model during SCTransform.    | 5000          | Integer   |
 | `transform min spots or cells`    | The minimum number of spots or cells to be used in the regression model fit by SCTransform. | 5             | Integer   |
