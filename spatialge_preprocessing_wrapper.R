@@ -192,6 +192,14 @@ saveRDS(tnbc, paste(output_filename, ".rds", sep=""))
 summ_df = summarize_STlist(tnbc)
 jsonlite::write_json(summ_df, path='samples.json')
 
+# Write genes.json file
+genes <- c()
+for (n in names(tnbc@tr_counts)) {
+    genes <- append(genes, rownames(tnbc@tr_counts[[n]]))
+}
+genes <- unique(genes)
+jsonlite::write_json(genes, path='genes.json')
+
 
 # At the end of the script, delete the temporary directory and its contents
 unlink(temp_dir, recursive = TRUE)
